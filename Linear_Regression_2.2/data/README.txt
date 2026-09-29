@@ -10,4 +10,7 @@ Data2.2.csv:
 points.csv:
   FIFA points for each team in the FIFA World Cup, before the World Cup Started (11th June 2026)
   Taken from https://inside.fifa.com/fifa-rankings/world-ranking/men?dateId=FRS_Male_Football_20260401
-  Pasted into Google Sheets, formatted to only include the team name and points columns, then exported to points.csv
+  Data from the site was pasted into Google Sheets, formatted to only include the team name and points columns, then exported to points.csv
+
+wc_matches.csv:
+  All matches in the world cup formatted to match the dataset used to find rest days (date, home team and away team)
