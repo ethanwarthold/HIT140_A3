@@ -11,7 +11,7 @@ df["FIFA points"] = df["Team"].map(points_lookup)
 opp_lookup = (df[["Team", "FIFA points"]].drop_duplicates(subset="Team").set_index("Team")["FIFA points"])
 df["Opp FIFA points"] = df["Opponent"].map(opp_lookup)
 
-print(df.describe())
+# print(df.describe())
 print(df.info())
 
 # GOALS SCORED AND CONCEDED DATA
@@ -56,7 +56,7 @@ goals = matches.groupby("team").agg(
 ).reset_index()
 
 # goals.to_csv("data/goals_data.csv")
-print(goals.describe())
+# print(goals.describe())
 print(goals.info())
 
 # Fix inconsistent naming between datasets
@@ -77,11 +77,10 @@ goals["team"] = goals["team"].replace(name_map)
 scored_lookup = goals.set_index("team")["average_scored"]
 conceded_lookup = goals.set_index("team")["average_conceded"]
 
-df["Avg Goals Scored"] = df["Team"].map(scored_lookup)
+df["Avg Scored"] = df["Team"].map(scored_lookup)
 df["Opp Avg Conceded"] = df["Opponent"].map(conceded_lookup)
 
-# Check if any values in the average goals colum are null
-print(df.describe())
+# print(df.describe())
 print(df.info())
 
 # REST DAYS DATA
@@ -131,14 +130,65 @@ df = df.merge(
     how="left"
 )
 
-# Put the opponent rest days column after the rest days column
-cols = list(df.columns)
-cols.remove("Opp Rest Days")
-cols.insert(cols.index("Rest Days") + 1, "Opp Rest Days")
-df = df[cols]
+# RECENT MATCHES DATA
 
-df = df.drop("Date", axis=1)
+results_f = results[(results["tournament"] != "FIFA World Cup")].copy() # results formatted, remove world cup matches to prevent duplicates
+results_f["home_team"] = results_f["home_team"].replace(name_map)
+results_f["away_team"] = results_f["away_team"].replace(name_map)
+
+# All matches before and during the world cup
+results_f = pd.concat([results_f, wc_matches], ignore_index=True)
+
+# Format columns to include the date, team name, goals scored and conceded
+# Matches will be duplicated, one row per team
+# This makes it simpler to identify which matches to use later
+
+home = results_f[["date", "home_team", "home_score", "away_score"]].rename(columns={
+    "home_team": "team",
+    "home_score": "goals_scored",
+    "away_score": "goals_conceded"
+})
+
+away = results_f[["date", "away_team", "away_score", "home_score"]].rename(columns={
+    "away_team": "team",
+    "away_score": "goals_scored",
+    "home_score": "goals_conceded"
+})
+
+matches = pd.concat([home, away], ignore_index=True).sort_values("date")
+
+def get_last_n_avg(team, date, n, type):
+    previous = matches[(matches["team"] == team) & (matches["date"] < date)].sort_values("date").tail(n)
+
+    if len(previous) < n: # check if any teams have less than the desired number of matches
+        print(f"Less than {n} previous matches for {team}, only {len(previous)} matches")
+
+    return previous[f"goals_{type}"].mean()
+
+n = 5 # Using scoring data for the previous 5 matches
+
+df[f"Last {n} Avg Scored"] = df.apply(lambda row: get_last_n_avg(row["Team"], row["Date"], n, "scored"), axis=1)
+df[f"Last {n} Opp Avg Conceded"] = df.apply(lambda row: get_last_n_avg(row["Opponent"], row["Date"], n, "conceded"), axis=1)
+
+print(df.info()) # Final verification that each column has 208 values
 
 # SAVE TO CSV
+
+# Order columns and remove unecessary columns
+df = df[
+    [
+        "Team",
+        "Opponent",
+        "FIFA points",
+        "Opp FIFA points",
+        "Avg Scored",
+        "Opp Avg Conceded",
+        "Rest Days",
+        "Opp Rest Days",
+        f"Last {n} Avg Scored",
+        f"Last {n} Opp Avg Conceded",
+        "Goals"
+    ]
+]
 
 df.to_csv("data/Data2.2.csv", index=False)

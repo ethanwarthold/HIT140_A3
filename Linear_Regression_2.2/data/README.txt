@@ -12,5 +12,9 @@ points.csv:
   Taken from https://inside.fifa.com/fifa-rankings/world-ranking/men?dateId=FRS_Male_Football_20260401
   Data from the site was pasted into Google Sheets, formatted to only include the team name and points columns, then exported to points.csv
 
-wc_matches.csv:
-  All matches in the world cup formatted to match the dataset used to find rest days (date, home team and away team)
+wc_matches.csv and wc_matches_old.csv:
+  All matches in the world cup formatted to match the dataset used to find rest days and scoring data (date, home team, away team, home score, away score)
+  The old version of the CSV did not include scoring, scores were added so data could be collected using previous match data within the world cup
+
+Additionally, https://raw.githubusercontent.com/martj42/international_results/master/results.csv is used to collect match data for the last year.
+This is used to find average goals scored, opponent average goals conceded, rest days, and opponent rest days data.
