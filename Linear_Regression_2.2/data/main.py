@@ -11,9 +11,6 @@ df["FIFA points"] = df["Team"].map(points_lookup)
 opp_lookup = (df[["Team", "FIFA points"]].drop_duplicates(subset="Team").set_index("Team")["FIFA points"])
 df["Opp FIFA points"] = df["Opponent"].map(opp_lookup)
 
-# print(df.describe())
-print(df.info())
-
 # GOALS SCORED AND CONCEDED DATA
 
 # Using data from a GitHub repository to extract goals scored/conceded data in the past 12 months
@@ -45,19 +42,7 @@ away = results_past_year[["date", "away_team", "home_team", "away_score", "home_
     }
 )
 
-matches = pd.concat([home, away], ignore_index=True)
-
-goals = matches.groupby("team").agg(
-    average_scored=("goals_scored", "mean"),
-    average_conceded=("goals_conceded", "mean"),
-    total_scored=("goals_scored", "sum"),
-    total_conceded=("goals_conceded", "sum"),
-    matches=("goals_scored", "count")
-).reset_index()
-
-# goals.to_csv("data/goals_data.csv")
-# print(goals.describe())
-print(goals.info())
+team_data = pd.concat([home, away], ignore_index=True)
 
 # Fix inconsistent naming between datasets
 name_map = {
@@ -72,16 +57,47 @@ name_map = {
     "Cape Verde": "Cabo Verde"
 }
 
-goals["team"] = goals["team"].replace(name_map)
+team_data["team"] = team_data["team"].replace(name_map)
 
-scored_lookup = goals.set_index("team")["average_scored"]
-conceded_lookup = goals.set_index("team")["average_conceded"]
+team_data["result"] = team_data.apply(
+    lambda row:
+    "w" if row["goals_scored"] > row["goals_conceded"] else
+    "l" if row["goals_scored"] < row["goals_conceded"] else
+    "d",
+    axis = 1
+)
+
+wins_data = team_data.groupby("team").agg(
+    wins=("result", lambda x: (x == "w").sum()),
+    matches=("result", "count")
+).reset_index()
+
+wins_data["win_rate"] = wins_data["wins"] / wins_data["matches"]
+
+goals_data = team_data.groupby("team").agg(
+    average_scored=("goals_scored", "mean"),
+    average_conceded=("goals_conceded", "mean"),
+    total_scored=("goals_scored", "sum"),
+    total_conceded=("goals_conceded", "sum"),
+    matches=("goals_scored", "count")
+).reset_index()
+
+# goals_data.to_csv("data/goals_data.csv", index=False)
+# wins_data.to_csv("data/wins_data.csv", index=False)
+
+print("=== GOALS DATA ===")
+print(goals_data.info())
+print("=== WINS DATA ===")
+print(wins_data.info())
+
+scored_lookup = goals_data.set_index("team")["average_scored"]
+conceded_lookup = goals_data.set_index("team")["average_conceded"]
+winrate_lookup = wins_data.set_index("team")["win_rate"]
 
 df["Avg Scored"] = df["Team"].map(scored_lookup)
 df["Opp Avg Conceded"] = df["Opponent"].map(conceded_lookup)
-
-# print(df.describe())
-print(df.info())
+df["Win Rate"] = df["Team"].map(winrate_lookup)
+df["Opp Win Rate"] = df["Opponent"].map(winrate_lookup)
 
 # REST DAYS DATA
 
@@ -170,11 +186,41 @@ n = 5 # Using scoring data for the previous 5 matches
 df[f"Last {n} Avg Scored"] = df.apply(lambda row: get_last_n_avg(row["Team"], row["Date"], n, "scored"), axis=1)
 df[f"Last {n} Opp Avg Conceded"] = df.apply(lambda row: get_last_n_avg(row["Opponent"], row["Date"], n, "conceded"), axis=1)
 
-print(df.info()) # Final verification that each column has 208 values
+# xG DATA
+
+team_ids = pd.read_csv("https://raw.githubusercontent.com/mominullptr/FIFA-World-Cup-2026-Dataset/main/teams.csv")
+matches_data = pd.read_csv("https://raw.githubusercontent.com/mominullptr/FIFA-World-Cup-2026-Dataset/main/matches.csv")
+
+team_lookup = team_ids.set_index("team_id")["team_name"]
+
+matches_data["date"] = pd.to_datetime(matches_data["date"])
+matches_data["home_team"] = matches_data["home_team_id"].map(team_lookup)
+matches_data["away_team"] = matches_data["away_team_id"].map(team_lookup)
+
+home = matches_data[["date", "home_team", "home_xg"]].rename(columns={
+    "home_team": "team",
+    "home_xg": "xg"
+})
+
+away = matches_data[["date", "away_team", "away_xg"]].rename(columns={
+    "away_team": "team",
+    "away_xg": "xg"
+})
+
+xg_data = pd.concat([home, away], ignore_index=True).sort_values("date")
+
+xg_data["team"] = xg_data["team"].replace(name_map)
+
+xg_data.to_csv("data/xg_data.csv", index=False)
+
+# for the xG column for the first match, perhaps use the xG from the most recent match played by the team
+# and for later matches, average the xG across previous matches
 
 # SAVE TO CSV
 
 # Order columns and remove unecessary columns
+# Opponent Rest Days and Opponent Win Rate have been removed so the total number of variables is 8
+
 df = df[
     [
         "Team",
@@ -184,11 +230,16 @@ df = df[
         "Avg Scored",
         "Opp Avg Conceded",
         "Rest Days",
-        "Opp Rest Days",
+        # "Opp Rest Days",
         f"Last {n} Avg Scored",
         f"Last {n} Opp Avg Conceded",
+        "Win Rate",
+        # "Opp Win Rate",
         "Goals"
     ]
 ]
+
+print("=== FINAL DATA ===")
+print(df.info()) # Final verification that each column has 208 values
 
 df.to_csv("data/Data2.2.csv", index=False)
