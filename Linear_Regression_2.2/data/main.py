@@ -186,7 +186,7 @@ n = 5 # Using scoring data for the previous 5 matches
 df[f"Last {n} Avg Scored"] = df.apply(lambda row: get_last_n_avg(row["Team"], row["Date"], n, "scored"), axis=1)
 df[f"Last {n} Opp Avg Conceded"] = df.apply(lambda row: get_last_n_avg(row["Opponent"], row["Date"], n, "conceded"), axis=1)
 
-# xG DATA
+# xG DATA - Unused
 
 team_ids = pd.read_csv("https://raw.githubusercontent.com/mominullptr/FIFA-World-Cup-2026-Dataset/main/teams.csv")
 matches_data = pd.read_csv("https://raw.githubusercontent.com/mominullptr/FIFA-World-Cup-2026-Dataset/main/matches.csv")
