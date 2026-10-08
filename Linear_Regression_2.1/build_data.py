@@ -3,13 +3,12 @@ import pandas as pd, numpy as np
 p=Path(__file__).resolve().parent; (p/'data').mkdir(parents=True,exist_ok=True)
 base=pd.read_csv(p.parent/'Linear_Regression_2.1'/'data'/'Data2.1.csv')
 raw=pd.read_csv(p.parent/'Data2.2.csv')
-# Align records by team and opponent, using the source's unique team-match records.
+
 assert not raw.duplicated(['Team','Opponent']).any(), 'Ambiguous repeated matchups: use date keys'
 h=raw.set_index(['Team','Opponent']); a=raw.set_index(['Opponent','Team'])
 keys=pd.MultiIndex.from_frame(base[['home_team','away_team']]); H=h.reindex(keys); A=a.reindex(keys)
 assert H.notna().all().all() and A.notna().all().all()
-# Home team's conceded average is recorded as Opp Avg Conceded in the away-team row.
-# The corresponding recent conceded average is likewise in the away-team row.
+
 new=base[['home_team','away_team','date']].copy()
 new['FIFA Points Difference']=H['FIFA points'].to_numpy()-A['FIFA points'].to_numpy()
 new['Avg Scored Difference']=H['Avg Scored'].to_numpy()-A['Avg Scored'].to_numpy()
