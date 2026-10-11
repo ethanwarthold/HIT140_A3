@@ -6,9 +6,13 @@ This project develops and evaluates a multiple linear regression model to predic
 
 The work is recorded in `main.ipynb`, which prepares the data, explores the predictors, fits regression models, and evaluates predictions against actual match results.
 
-## Python version and dependencies
+## requirements
+Python 3.10+
 
-Recommended Python version: Python 3.11 or 3.12 (64-bit)
+## install dependencies
+```
+pip install numpy pandas matplotlib seaborn scikit-learn statsmodels openpyxl notebook ipykernel
+```
 
 ## Project Structure
 ```
