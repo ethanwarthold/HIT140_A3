@@ -11,7 +11,7 @@ The work is recorded in `main.ipynb`, which prepares the data, explores the pred
 Recommended Python version: Python 3.11 or 3.12 (64-bit)
 
 ## Project Structure
-
+```
 Linear_Regression_2.1/
 ├── main.ipynb
 ├── main.py
@@ -24,7 +24,7 @@ Linear_Regression_2.1/
     ├── match_teams_goal_difference.csv
     ├── sportsref_download-2.csv
     └── top_5_league_player.csv
-
+```
 
 ## Files
 
@@ -41,7 +41,6 @@ Linear_Regression_2.1/
 
 The notebook also reads **`../Linear_Regression_2.2/data/data2.2.csv`** to obtain two recent-match predictors.
 
-## Method
 
 The notebook:
 
