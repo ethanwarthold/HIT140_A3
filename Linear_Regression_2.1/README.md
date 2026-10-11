@@ -4,7 +4,7 @@
 
 This project develops and evaluates a multiple linear regression model to predict the goal difference between two teams in a FIFA World Cup 2026 match. The dataset contains **104 matches**, with **eight explanatory variables** per match. Goal difference is defined as the home team's goals minus the away team's goals; a positive value favours the home team.
 
-The work is recorded in `main.ipynb`, which prepares the data, explores the predictors, fits regression models, and evaluates predictions against actual match results.
+The work is recorded in `main.ipynb`, which prepares the data, explores the predictors, fits regression models, and evaluates predictions against match results.
 
 ## requirements
 Python 3.10+
