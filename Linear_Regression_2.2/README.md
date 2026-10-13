@@ -4,6 +4,8 @@
   Other types of regression models are used to compare with linear regression, those being: Ada Boost, Bagging, Gradient Boost, and Random Forest.
 
 ### Dependences
+  python 3.10+  
+
   - matplotlib
   - numpy
   - pandas
@@ -23,7 +25,7 @@
   ```
   Alternatively, open main.py through a file explorer window.
 
-### Project Structure
+### Project Files
   visualise.py - a light wrapper over seaborn to quickly display histograms or scatterplots with trendlines for the explanatory variables.  
 
   transform.py - contains functions for applying transforms to the data.  
