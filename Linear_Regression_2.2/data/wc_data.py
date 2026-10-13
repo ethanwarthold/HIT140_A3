@@ -1,6 +1,5 @@
 """
 This file was made to match the formatting of wc_matches.csv to the full international match history data
-
 """
 
 import pandas as pd
