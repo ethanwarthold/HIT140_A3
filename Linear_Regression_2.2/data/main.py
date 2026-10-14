@@ -188,30 +188,30 @@ df[f"Last {n} Opp Avg Conceded"] = df.apply(lambda row: get_last_n_avg(row["Oppo
 
 # xG DATA - Unused
 
-team_ids = pd.read_csv("https://raw.githubusercontent.com/mominullptr/FIFA-World-Cup-2026-Dataset/main/teams.csv")
-matches_data = pd.read_csv("https://raw.githubusercontent.com/mominullptr/FIFA-World-Cup-2026-Dataset/main/matches.csv")
+# team_ids = pd.read_csv("https://raw.githubusercontent.com/mominullptr/FIFA-World-Cup-2026-Dataset/main/teams.csv")
+# matches_data = pd.read_csv("https://raw.githubusercontent.com/mominullptr/FIFA-World-Cup-2026-Dataset/main/matches.csv")
 
-team_lookup = team_ids.set_index("team_id")["team_name"]
+# team_lookup = team_ids.set_index("team_id")["team_name"]
 
-matches_data["date"] = pd.to_datetime(matches_data["date"])
-matches_data["home_team"] = matches_data["home_team_id"].map(team_lookup)
-matches_data["away_team"] = matches_data["away_team_id"].map(team_lookup)
+# matches_data["date"] = pd.to_datetime(matches_data["date"])
+# matches_data["home_team"] = matches_data["home_team_id"].map(team_lookup)
+# matches_data["away_team"] = matches_data["away_team_id"].map(team_lookup)
 
-home = matches_data[["date", "home_team", "home_xg"]].rename(columns={
-    "home_team": "team",
-    "home_xg": "xg"
-})
+# home = matches_data[["date", "home_team", "home_xg"]].rename(columns={
+#     "home_team": "team",
+#     "home_xg": "xg"
+# })
 
-away = matches_data[["date", "away_team", "away_xg"]].rename(columns={
-    "away_team": "team",
-    "away_xg": "xg"
-})
+# away = matches_data[["date", "away_team", "away_xg"]].rename(columns={
+#     "away_team": "team",
+#     "away_xg": "xg"
+# })
 
-xg_data = pd.concat([home, away], ignore_index=True).sort_values("date")
+# xg_data = pd.concat([home, away], ignore_index=True).sort_values("date")
 
-xg_data["team"] = xg_data["team"].replace(name_map)
+# xg_data["team"] = xg_data["team"].replace(name_map)
 
-xg_data.to_csv("data/xg_data.csv", index=False)
+# xg_data.to_csv("data/xg_data.csv", index=False)
 
 # for the xG column for the first match, perhaps use the xG from the most recent match played by the team
 # and for later matches, average the xG across previous matches

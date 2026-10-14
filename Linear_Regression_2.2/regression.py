@@ -6,16 +6,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 
-from sklearn.ensemble import AdaBoostRegressor, BaggingRegressor, GradientBoostingRegressor
+from sklearn.ensemble import AdaBoostRegressor, BaggingRegressor, GradientBoostingRegressor, RandomForestRegressor
 
-def linreg_sk(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: int):
+def linear_reg_sk(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: int):
     X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=random_state)
 
     model = LinearRegression()
     model.fit(X_train, y_train)
-
-    model_gb = GradientBoostingRegressor()
-    model_gb.fit(X_train, y_train)
 
     print("Intercept:", model.intercept_)
     print("Coefficient:", model.coef_) # prints a list of coefficients
@@ -23,7 +20,7 @@ def linreg_sk(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: 
     y_pred = model.predict(X_test)
 
     df_pred = pd.DataFrame({"Actual": y_test, "Predicted": y_pred})
-    print(df_pred)
+    # print(df_pred) # print actual values compared to predicted values
 
     y_max = y.max()
     y_min = y.min()
@@ -52,8 +49,14 @@ def linreg_sk(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: 
     print(f"Norm. RMSE:        {rmse_norm:.2f}   |  Baseline: {base_rmse_norm:.2f}")
     print(f"R^2:               {r_2:.3f}  |  Baseline: {base_r_2:.3f}")
 
-    model = GradientBoostingRegressor(random_state=random_state)
+def adaboost_reg(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: int):
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=random_state)
+
+    model = AdaBoostRegressor(random_state=random_state)
     model.fit(X_train, y_train)
+
+    y_max = y.max()
+    y_min = y.min()
 
     y_pred = model.predict(X_test)
 
@@ -63,15 +66,21 @@ def linreg_sk(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: 
     rmse_norm = rmse / (y_max - y_min)
     r_2 = metrics.r2_score(y_test, y_pred)
 
-    print("Gradient boosting regressor metrics:")
+    print("Ada boost regressor metrics:")
     print(f"MAE:               {mae:.2f}")
     print(f"MSE:               {mse:.2f}")
     print(f"RMSE:              {rmse:.2f}")
     print(f"Norm. RMSE:        {rmse_norm:.2f}")
     print(f"R^2:               {r_2:.3f}")
 
+def bagging_reg(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: int):
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=random_state)
+
     model = BaggingRegressor(random_state=random_state)
     model.fit(X_train, y_train)
+
+    y_max = y.max()
+    y_min = y.min()
 
     y_pred = model.predict(X_test)
 
@@ -88,8 +97,14 @@ def linreg_sk(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: 
     print(f"Norm. RMSE:        {rmse_norm:.2f}")
     print(f"R^2:               {r_2:.3f}")
 
-    model = AdaBoostRegressor(random_state=random_state)
+def gradientboost_reg(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: int):
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=random_state)
+    
+    model = GradientBoostingRegressor(random_state=random_state)
     model.fit(X_train, y_train)
+
+    y_max = y.max()
+    y_min = y.min()
 
     y_pred = model.predict(X_test)
 
@@ -99,7 +114,31 @@ def linreg_sk(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: 
     rmse_norm = rmse / (y_max - y_min)
     r_2 = metrics.r2_score(y_test, y_pred)
 
-    print("Ada boost regressor metrics:")
+    print("Gradient boosting regressor metrics:")
+    print(f"MAE:               {mae:.2f}")
+    print(f"MSE:               {mse:.2f}")
+    print(f"RMSE:              {rmse:.2f}")
+    print(f"Norm. RMSE:        {rmse_norm:.2f}")
+    print(f"R^2:               {r_2:.3f}")
+
+def randomforest_reg(x: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: int):
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=random_state)
+    
+    model = RandomForestRegressor(random_state=random_state)
+    model.fit(X_train, y_train)
+
+    y_max = y.max()
+    y_min = y.min()
+
+    y_pred = model.predict(X_test)
+
+    mae = metrics.mean_absolute_error(y_test, y_pred)
+    mse = metrics.mean_squared_error(y_test, y_pred)
+    rmse =  math.sqrt(metrics.mean_squared_error(y_test, y_pred))
+    rmse_norm = rmse / (y_max - y_min)
+    r_2 = metrics.r2_score(y_test, y_pred)
+
+    print("Random forest regressor metrics:")
     print(f"MAE:               {mae:.2f}")
     print(f"MSE:               {mse:.2f}")
     print(f"RMSE:              {rmse:.2f}")
