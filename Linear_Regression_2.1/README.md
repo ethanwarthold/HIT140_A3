@@ -46,17 +46,39 @@ Linear_Regression_2.1/
 The notebook also reads **`../Linear_Regression_2.2/data/data2.2.csv`** to obtain two recent-match predictors.
 
 
-The notebook:
+## The notebook:
 
-1. Cleans the match fixture data and derives goal differences from scores (excluding penalty-shootout figures).
-2. Calculates 2025 team-level rates and home-minus-away differences.
-3. Adds the top-five-league player count difference.
-4. Merges two recent-match statistics from Regression 2.2.
-5. Performs exploratory analysis using a correlation heatmap, histograms, and scatterplots.
-6. Uses a **70/30 train/test split** (`random_state=0`).
-7. Fits linear regression with scikit-learn and an OLS model with statsmodels.
-8. Uses five-fold cross-validation on training data and compares ordinary linear regression with a Yeo–Johnson transformation pipeline.
-9. Evaluates test predictions using MAE, MSE, RMSE, R², and a mean-prediction baseline.
+# Data collection — data_collection.ipynb
+
+Cleans match fixtures and calculates Home-minus-Away goal differences, excluding penalty-shootout figures.
+
+Calculates 2025 team rates, averages, and Home-minus-Away differences.
+
+Adds the top-five-European-league player-count difference.
+
+Merges two recent-match predictors from Linear Regression 2.2.
+
+Saves the final dataset as data/dataset.csv.
+
+# Analysis — main.ipynb
+
+Checks for 104 matches, eight predictors, and missing values.
+
+Displays descriptive statistics, correlations, scatterplots, and training-data histograms.
+
+Fits full-data statsmodels OLS and examines coefficients, R², adjusted R², residuals, and a Q–Q plot.
+
+Uses a 70/30 training/test split (random_state=0).
+
+Compares original linear regression, Yeo–Johnson linear regression, Random Forest, SVR, and a mean baseline using identical five-fold training splits.
+
+Fits transformations and scaling inside each cross-validation fold.
+
+Evaluates test predictions using MAE, MSE, RMSE, normalised RMSE, and R².
+
+Plots actual versus predicted test goal differences for the selected linear regression approach.
+
+Normalised RMSE is calculated using the test goal-difference range. Full-data OLS results describe model fit; they are distinct from test prediction performance.
 
 ## Sources
 
