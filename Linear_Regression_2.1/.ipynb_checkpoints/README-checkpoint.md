@@ -46,9 +46,9 @@ Linear_Regression_2.1/
 The notebook also reads **`../Linear_Regression_2.2/data/data2.2.csv`** to obtain two recent-match predictors.
 
 
-## The notebook:
+# The notebook:
 
-# Data collection — data_collection.ipynb
+## Data collection — data_collection.ipynb
 
 Cleans match fixtures and calculates Home-minus-Away goal differences, excluding penalty-shootout figures.
 
@@ -60,7 +60,7 @@ Merges two recent-match predictors from Linear Regression 2.2.
 
 Saves the final dataset as data/dataset.csv.
 
-# Analysis — main.ipynb
+## Analysis — main.ipynb
 
 Checks for 104 matches, eight predictors, and missing values.
 
